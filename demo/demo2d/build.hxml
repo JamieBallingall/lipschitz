@@ -1,0 +1,5 @@
+-lib thx.core
+-lib minicanvas
+-cp ../../src
+-main Demo
+-js bin/index.js
