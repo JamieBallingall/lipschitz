@@ -26,7 +26,7 @@ Demo.__name__ = ["Demo"];
 Demo.main = function() {
 	var grid = new lip_Grid(400,400);
 	grid.paintCircle(180,120,80);
-	minicanvas_MiniCanvas.create(grid.cols,grid.rows).checkboard().border(1,Demo.interior).box(function(x,y) {
+	minicanvas_MiniCanvas.create(grid.cols,grid.rows).grid().border(1,Demo.border).box(function(x,y) {
 		var _g = grid.getAt(y * grid.rows | 0,x * grid.cols | 0);
 		switch(_g[1]) {
 		case 0:
@@ -1352,7 +1352,7 @@ lip_Grid.prototype = {
 	,paintCircle: function(row,col,radius) {
 		var absradius = Math.abs(radius);
 		var _g1 = 0;
-		var _g = Math.round(radius);
+		var _g = Math.ceil(radius);
 		while(_g1 < _g) {
 			var x = _g1++;
 			var dx = x / radius;
@@ -13833,6 +13833,12 @@ Demo.interior = (function($this) {
 Demo.exterior = (function($this) {
 	var $r;
 	var this1 = [1,1,1,1];
+	$r = this1;
+	return $r;
+}(this));
+Demo.border = (function($this) {
+	var $r;
+	var this1 = [0.65,0.65,0.65,1];
 	$r = this1;
 	return $r;
 }(this));
