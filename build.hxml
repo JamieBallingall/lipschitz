@@ -1,0 +1,9 @@
+-cp src
+-cp test
+-main TestAll
+-js bin/index.js
+
+-lib utest
+-lib thx.core
+
+-cmd node bin/index.js
