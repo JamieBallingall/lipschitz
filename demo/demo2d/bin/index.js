@@ -26,7 +26,7 @@ Demo.__name__ = ["Demo"];
 Demo.main = function() {
 	var grid = new lip_Grid(400,400);
 	grid.paintCircle(180,120,80);
-	minicanvas_MiniCanvas.create(grid.cols,grid.rows).checkboard().box(function(x,y) {
+	minicanvas_MiniCanvas.create(grid.cols,grid.rows).checkboard().border(1,Demo.interior).box(function(x,y) {
 		var _g = grid.getAt(y * grid.rows | 0,x * grid.cols | 0);
 		switch(_g[1]) {
 		case 0:

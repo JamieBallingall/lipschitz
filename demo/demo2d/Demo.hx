@@ -11,6 +11,7 @@ class Demo {
     grid.paintCircle(180, 120, 80);
     MiniCanvas.create(grid.cols, grid.rows)
       .checkboard()
+      .border(1, interior)
       .box(function(x, y): Rgbxa {
         return switch grid.getAt(Std.int(y * grid.rows), Std.int(x * grid.cols)) {
           case Unknown: unknown;
