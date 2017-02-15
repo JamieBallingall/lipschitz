@@ -58,4 +58,14 @@ class Grid {
   inline function rowcol2linear(row: Int, col: Int): Int {
     return col * rows + row;
   }
+
+  public inline function point2linear(p: Point2): Int {
+    return rowcol2linear(p.row, p.col);
+  }
+
+  public inline function linear2point(linear: Int): Point2 {
+    var col: Int = Math.floor(linear / rows);
+    var row: Int = linear % rows;
+    return new Point2(row, col);
+  }
 }

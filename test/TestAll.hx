@@ -1,5 +1,7 @@
 import utest.UTest;
 import utest.Assert;
+import lip.Point2;
+import lip.Grid;
 
 class TestAll {
   public function new() {}
@@ -13,5 +15,13 @@ class TestAll {
     var cc = lip.shapes.Boolean.union(c, c);
     Assert.isTrue(cc(0, 0) < 0);
     Assert.isTrue(cc(10, 10) > 0);
+  }
+
+  public function testIndexing() {
+    var grid: Grid = new Grid(90, 110);
+    var i: Int = 503;
+    var p: Point2;
+    p = grid.linear2point(i);
+    Assert.isTrue(i == grid.point2linear(p));
   }
 }
