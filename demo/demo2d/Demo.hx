@@ -1,5 +1,7 @@
 import thx.color.Rgbxa;
 import thx.color.Hsl;
+import lip.shapes.Primitives;
+import lip.shapes.Boolean;
 
 class Demo {
   static var unknown  = Rgbxa.create(0, 0, 0, 0);
@@ -8,8 +10,10 @@ class Demo {
   static var border   = Rgbxa.create(0.65, 0.65, 0.65, 1);
 
   public static function main() {
-    var grid = new lip.Grid(400, 400);
-    grid.paintCircle(180, 120, 80);
+    var grid = new lip.Grid(100, 100);
+    var shape = Boolean.union(Primitives.circle(40, 40, 25),
+                              Primitives.circle(60, 60, 25));
+    grid.render(shape);
     MiniCanvas.create(grid.cols, grid.rows)
       .grid()
       .border(1, border)
