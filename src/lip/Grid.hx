@@ -18,9 +18,9 @@ class Grid {
 
   public function paintCircle(row: Int, col: Int, radius: Float) {
     var absradius = Math.abs(radius);
-    for(x in 0...Math.ceil(radius)) {
-      var dx = x/radius;
-      var tx = Math.round(Math.sqrt(1 - dx * dx) * radius);
+    for(x in 0...Math.floor(absradius)) {
+      var dx = x / absradius;
+      var tx = Math.floor(Math.sqrt(1 - dx * dx) * absradius);
       for(y in 0...tx) {
         setSymmetrics(row, col, y, x, Interior(Inferred));
       }
