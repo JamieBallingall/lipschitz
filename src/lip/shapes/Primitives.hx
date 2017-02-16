@@ -10,6 +10,7 @@ class Primitives {
       return Math.sqrt(xdiff * xdiff + ydiff * ydiff) - r;
     }
   }
+
   public static function halfplane(a: Float, b: Float, c: Float): Shape {
     var k = 1 / Math.sqrt(a * a + b * b);
     return function (xx: Float, yy: Float): Float {
