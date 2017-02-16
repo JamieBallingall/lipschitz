@@ -10,15 +10,15 @@ class Demo {
   static var border   = Rgbxa.create(0.65, 0.65, 0.65, 1);
 
   public static function main() {
-    var grid = new lip.Grid(100, 100);
-    var shape = Boolean.intersection(Primitives.circle(40, 40, 25),
-                                     Primitives.halfplane(1, 1, -75));
+    var grid = new lip.Grid3(20, 20, 20);
+    var shape = Boolean.union3(Primitives.sphere(8, 8, 10, 6),
+                               Primitives.sphere(12, 12, 10, 6));
     grid.render(shape);
     MiniCanvas.create(grid.cols, grid.rows)
       .grid()
       .border(1, border)
       .box(function(x, y): Rgbxa {
-        return switch grid.getAt(Std.int(y * grid.rows), Std.int(x * grid.cols)) {
+        return switch grid.getAt(Std.int(y * grid.rows), Std.int(x * grid.cols), 10) {
           case Unknown: unknown;
           case Interior(_): interior;
           case Exterior(_): exterior;

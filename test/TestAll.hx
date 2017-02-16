@@ -1,7 +1,6 @@
 import utest.UTest;
 import utest.Assert;
-import lip.Point2;
-import lip.Grid;
+import lip.Grid3;
 
 class TestAll {
   public function new() {}
@@ -18,10 +17,22 @@ class TestAll {
   }
 
   public function testIndexing() {
-    var grid: Grid = new Grid(90, 110);
-    var i: Int = 503;
-    var p: Point2;
-    p = grid.linear2point(i);
-    Assert.isTrue(i == grid.point2linear(p));
+    var grid: Grid3 = new Grid3(3, 5, 7);
+    var tests = [
+      { linear: 0, row: 0, col:0, layer:0 },
+      { linear: 1, row: 1, col:0, layer:0 },
+      { linear: 3, row: 0, col:1, layer:0 },
+      { linear: 15, row: 0, col:0, layer:1 },
+      { linear: 16, row: 1, col:0, layer:1 },
+      { linear: 19, row: 1, col:1, layer:1 },
+      { linear: 104, row: 2, col:4, layer:6 },
+    ];
+
+    for(test in tests) {
+      Assert.equals(test.row, grid.linear2row(test.linear), 'expected ${test.row} for row but got ${grid.linear2row(test.linear)}: $test');
+      Assert.equals(test.col, grid.linear2col(test.linear), 'expected ${test.col} for col but got ${grid.linear2col(test.linear)}: $test');
+      Assert.equals(test.layer, grid.linear2layer(test.linear), 'expected ${test.layer} for layer but got ${grid.linear2layer(test.linear)}: $test');
+      Assert.equals(test.linear, grid.rowcollayer2linear(test.row, test.col, test.layer), 'expected ${test.linear} for linear but got ${grid.rowcollayer2linear(test.row, test.col, test.layer)}: $test');
+    }
   }
 }

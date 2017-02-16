@@ -24,11 +24,11 @@ DateTools.getMonthDays = function(d) {
 var Demo = function() { };
 Demo.__name__ = ["Demo"];
 Demo.main = function() {
-	var grid = new lip_Grid(100,100);
-	var shape = lip_shapes_Boolean.intersection(lip_shapes_Primitives.circle(40,40,25),lip_shapes_Primitives.halfplane(1,1,-75));
+	var grid = new lip_Grid3(20,20,20);
+	var shape = lip_shapes_Boolean.union3(lip_shapes_Primitives.sphere(8,8,10,6),lip_shapes_Primitives.sphere(12,12,10,6));
 	grid.render(shape);
 	minicanvas_MiniCanvas.create(grid.cols,grid.rows).grid().border(1,Demo.border).box(function(x,y) {
-		var _g = grid.getAt(y * grid.rows | 0,x * grid.cols | 0);
+		var _g = grid.getAt(y * grid.rows | 0,x * grid.cols | 0,10);
 		switch(_g[1]) {
 		case 0:
 			return Demo.unknown;
@@ -1331,10 +1331,11 @@ js_Boot.__isNativeObj = function(o) {
 js_Boot.__resolveNativeClass = function(name) {
 	return $global[name];
 };
-var lip_Grid = function(rows,cols) {
+var lip_Grid3 = function(rows,cols,layers) {
 	this.rows = rows;
 	this.cols = cols;
-	this.length = rows * cols;
+	this.layers = layers;
+	this.length = rows * cols * layers;
 	var _g = [];
 	var _g2 = 0;
 	var _g1 = this.length;
@@ -1345,68 +1346,80 @@ var lip_Grid = function(rows,cols) {
 	this.array = _g;
 	this.cursor = 0;
 };
-lip_Grid.__name__ = ["lip","Grid"];
-lip_Grid.prototype = {
+lip_Grid3.__name__ = ["lip","Grid3"];
+lip_Grid3.prototype = {
 	array: null
 	,rows: null
 	,cols: null
+	,layers: null
 	,length: null
 	,cursor: null
-	,paintCircle: function(row,col,radius) {
+	,paintSphere: function(row,col,layer,radius) {
 		var absradius = Math.floor(Math.abs(radius));
 		var inferred = radius <= 0 ? lip_PointStatus.Interior(lip_PointValue.Inferred) : lip_PointStatus.Exterior(lip_PointValue.Inferred);
-		var _g1 = 0;
+		var _g1 = -absradius;
 		var _g = absradius;
 		while(_g1 < _g) {
-			var x = _g1++;
-			var dx = x / absradius;
-			var tx = Math.floor(Math.sqrt(1 - dx * dx) * absradius);
+			var l = _g1++;
+			var dl = l / absradius;
+			var tl = Math.floor(Math.sqrt(1 - dl * dl) * absradius);
 			var _g3 = 0;
-			var _g2 = tx;
+			var _g2 = tl;
 			while(_g3 < _g2) {
-				var y = _g3++;
-				this.setSymmetrics(row,col,y,x,inferred);
+				var x = _g3++;
+				var dx = x / tl;
+				var tx = Math.floor(Math.sqrt(1 - dx * dx) * tl);
+				var _g5 = 0;
+				var _g4 = tx;
+				while(_g5 < _g4) {
+					var y = _g5++;
+					this.setSymmetrics(row,col,l,y,x,inferred);
+				}
 			}
 		}
-		this.setAt(row,col,radius <= 0 ? lip_PointStatus.Interior(lip_PointValue.Evaluated(-radius)) : lip_PointStatus.Exterior(lip_PointValue.Evaluated(radius)));
+		this.setAt(row,col,layer,radius <= 0 ? lip_PointStatus.Interior(lip_PointValue.Evaluated(-radius)) : lip_PointStatus.Exterior(lip_PointValue.Evaluated(radius)));
 		while(this.cursor < this.length && this.array[this.cursor] != lip_PointStatus.Unknown) this.cursor++;
 	}
-	,setSymmetrics: function(row,col,drow,dcol,value) {
+	,setSymmetrics: function(row,col,layer,drow,dcol,value) {
 		if(drow == 0) {
 			if(dcol == 0) {
-				this.setAt(row,col,value);
+				this.setAt(row,col,layer,value);
 			} else {
 				var dcol1 = dcol;
-				this.setAt(row,col + dcol1,value);
-				this.setAt(row,col - dcol1,value);
+				this.setAt(row,col + dcol1,layer,value);
+				this.setAt(row,col - dcol1,layer,value);
 			}
 		} else if(dcol == 0) {
 			var drow1 = drow;
-			this.setAt(row + drow1,col,value);
-			this.setAt(row - drow1,col,value);
+			this.setAt(row + drow1,col,layer,value);
+			this.setAt(row - drow1,col,layer,value);
 		} else {
 			var drow2 = drow;
 			var dcol2 = dcol;
-			this.setAt(row + drow2,col + dcol2,value);
-			this.setAt(row + drow2,col - dcol2,value);
-			this.setAt(row - drow2,col + dcol2,value);
-			this.setAt(row - drow2,col - dcol2,value);
+			this.setAt(row + drow2,col + dcol2,layer,value);
+			this.setAt(row + drow2,col - dcol2,layer,value);
+			this.setAt(row - drow2,col + dcol2,layer,value);
+			this.setAt(row - drow2,col - dcol2,layer,value);
 		}
 	}
-	,getAt: function(row,col) {
-		return this.array[col * this.rows + row];
+	,getAt: function(row,col,layer) {
+		return this.array[layer * this.cols * this.rows + col * this.rows + row];
 	}
-	,setAt: function(row,col,status) {
-		if(row < 0 || row >= this.rows || col < 0 || col >= this.cols) {
+	,setAt: function(row,col,layer,status) {
+		if(row < 0 || row >= this.rows || col < 0 || col >= this.cols || layer < 0 || layer >= this.layers) {
 			return;
 		}
-		this.array[col * this.rows + row] = status;
+		this.array[layer * this.cols * this.rows + col * this.rows + row] = status;
 	}
-	,rowcol2linear: function(row,col) {
-		return col * this.rows + row;
+	,rowcollayer2linear: function(row,col,layer) {
+		return layer * this.cols * this.rows + col * this.rows + row;
+	}
+	,linear2layer: function(linear) {
+		return Math.floor(linear / (this.rows * this.cols));
 	}
 	,linear2col: function(linear) {
-		return Math.floor(linear / this.rows);
+		var temp = linear - this.rows * this.cols * Math.floor(linear / (this.rows * this.cols));
+		return Math.floor(temp / this.rows);
 	}
 	,linear2row: function(linear) {
 		return linear % this.rows;
@@ -1415,13 +1428,17 @@ lip_Grid.prototype = {
 		var z;
 		var row;
 		var col;
+		var layer;
 		while(this.cursor < this.length) {
 			row = this.cursor % this.rows;
-			col = Math.floor(this.cursor / this.rows);
-			this.paintCircle(row,col,shape(col,row));
+			var linear = this.cursor;
+			var temp = linear - this.rows * this.cols * Math.floor(linear / (this.rows * this.cols));
+			col = Math.floor(temp / this.rows);
+			layer = Math.floor(this.cursor / (this.rows * this.cols));
+			this.paintSphere(row,col,layer,shape(col,row,layer));
 		}
 	}
-	,__class__: lip_Grid
+	,__class__: lip_Grid3
 };
 var lip_PointValue = { __ename__ : ["lip","PointValue"], __constructs__ : ["Inferred","Evaluated"] };
 lip_PointValue.Inferred = ["Inferred",0];
@@ -1466,12 +1483,6 @@ lip_shapes_Primitives.circle = function(x,y,r) {
 		var xdiff = xx - x;
 		var ydiff = yy - y;
 		return Math.sqrt(xdiff * xdiff + ydiff * ydiff) - r;
-	};
-};
-lip_shapes_Primitives.halfplane = function(a,b,c) {
-	var k = 1 / Math.sqrt(a * a + b * b);
-	return function(xx,yy) {
-		return k * (a * xx + b * yy + c);
 	};
 };
 lip_shapes_Primitives.sphere = function(x,y,z,r) {
