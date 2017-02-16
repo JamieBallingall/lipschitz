@@ -20,21 +20,16 @@ class Grid {
 
   public function paintCircle(row: Int, col: Int, radius: Float) {
     var absradius: Int = Math.floor(Math.abs(radius));
+    var inferred: PointStatus = (radius <=0 ? Interior(Inferred) : Exterior(Inferred));
     for(x in 0...absradius) {
       var dx = x / absradius;
       var tx = Math.floor(Math.sqrt(1 - dx * dx) * absradius);
-      if(radius <= 0) {
-        for(y in 0...tx) {
-          setSymmetrics(row, col, y, x, Interior(Inferred));
-        }
-      }
-      else {
-        for(y in 0...tx) {
-          setSymmetrics(row, col, y, x, Exterior(Inferred));
-        }
+      for(y in 0...tx) {
+        setSymmetrics(row, col, y, x, inferred);
       }
     }
-    setAt(row, col, absradius == 0 ? Exterior(Evaluated(radius)) : Interior(Evaluated(radius)));
+
+    setAt(row, col, radius <= 0 ? Interior(Evaluated(-radius)) : Exterior(Evaluated(radius)));
     advanceCursor(absradius);
   }
 
@@ -69,29 +64,29 @@ class Grid {
     return col * rows + row;
   }
 
-  public inline function point2linear(p: Point2): Int {
-    return rowcol2linear(p.row, p.col);
+  inline function linear2col(linear: Int): Int {
+    return Math.floor(linear / rows);
   }
 
-  public inline function linear2point(linear: Int): Point2 {
-    var col: Int = Math.floor(linear / rows);
-    var row: Int = linear % rows;
-    return new Point2(row, col);
+  inline function linear2row(linear: Int): Int {
+    return linear % rows;
   }
 
   function advanceCursor(skip: Int): Void {
     // skip is not used right now. But it will be one day
-    while (cursor <= length && array[cursor] != Unknown)
+    while (cursor < length && array[cursor] != Unknown)
       cursor++;
   }
 
   public function render(shape: Shape): Void {
     var z: Float;
-    var p: Point2;
-    while (cursor <= length) {
-      p = linear2point(cursor);
-      z = shape(p.col, p.row);
-      paintCircle(p.row, p.col, z);
+    var row: Int;
+    var col: Int;
+
+    while (cursor < length) {
+      row = linear2row(cursor);
+      col = linear2col(cursor);
+      paintCircle(row, col, shape(col, row));
     }
   }
 
