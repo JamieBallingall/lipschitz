@@ -10,6 +10,9 @@ class Grid {
   var length: Int;
   var cursor: Int; // The position of the first Unknown
 
+  static var interiorInferred = Interior(Inferred);
+  static var exteriorInferred = Exterior(Inferred);
+
   public function new(rows: Int, cols: Int) {
     this.rows = rows;
     this.cols = cols;
@@ -20,7 +23,7 @@ class Grid {
 
   public function paintCircle(row: Int, col: Int, radius: Float) {
     var absradius: Int = Math.floor(Math.abs(radius));
-    var inferred: PointStatus = (radius <=0 ? Interior(Inferred) : Exterior(Inferred));
+    var inferred: PointStatus = (radius <=0 ? interiorInferred : exteriorInferred);
     for(x in 0...absradius) {
       var dx = x / absradius;
       var tx = Math.floor(Math.sqrt(1 - dx * dx) * absradius);
@@ -36,20 +39,19 @@ class Grid {
   }
 
   function setSymmetrics(row: Int, col: Int, drow: Int, dcol: Int, value: PointStatus) {
-    switch [drow, dcol] {
-      case [0, 0]:
-        setAt(row, col, value);
-      case [0, dcol]:
-        setAt(row, col + dcol, value);
-        setAt(row, col - dcol, value);
-      case [drow, 0]:
-        setAt(row + drow, col, value);
-        setAt(row - drow, col, value);
-      case [drow, dcol]:
-        setAt(row + drow, col + dcol, value);
-        setAt(row + drow, col - dcol, value);
-        setAt(row - drow, col + dcol, value);
-        setAt(row - drow, col - dcol, value);
+    if(drow == 0 && dcol == 0) {
+      setAt(row, col, value);
+    } else if(drow == 0) {
+      setAt(row, col + dcol, value);
+      setAt(row, col - dcol, value);
+    } else if(dcol == 0) {
+      setAt(row + drow, col, value);
+      setAt(row - drow, col, value);
+    } else {
+      setAt(row + drow, col + dcol, value);
+      setAt(row + drow, col - dcol, value);
+      setAt(row - drow, col + dcol, value);
+      setAt(row - drow, col - dcol, value);
     }
   }
 
