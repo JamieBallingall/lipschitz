@@ -1344,8 +1344,6 @@ var lip_Grid = function(rows,cols) {
 	}
 	this.array = _g;
 	this.cursor = 0;
-	this.cursorRow = 0;
-	this.cursorCol = 0;
 };
 lip_Grid.__name__ = ["lip","Grid"];
 lip_Grid.prototype = {
@@ -1354,8 +1352,6 @@ lip_Grid.prototype = {
 	,cols: null
 	,length: null
 	,cursor: null
-	,cursorRow: null
-	,cursorCol: null
 	,paintCircle: function(row,col,radius) {
 		var absradius = Math.floor(Math.abs(radius));
 		var inferred = radius <= 0 ? lip_PointStatus.Interior(lip_PointValue.Inferred) : lip_PointStatus.Exterior(lip_PointValue.Inferred);
@@ -1373,7 +1369,7 @@ lip_Grid.prototype = {
 			}
 		}
 		this.setAt(row,col,radius <= 0 ? lip_PointStatus.Interior(lip_PointValue.Evaluated(-radius)) : lip_PointStatus.Exterior(lip_PointValue.Evaluated(radius)));
-		this.advanceCursor(absradius);
+		while(this.cursor < this.length && this.array[this.cursor] != lip_PointStatus.Unknown) this.cursor++;
 	}
 	,setSymmetrics: function(row,col,drow,dcol,value) {
 		if(drow == 0) {
@@ -1414,9 +1410,6 @@ lip_Grid.prototype = {
 	}
 	,linear2row: function(linear) {
 		return linear % this.rows;
-	}
-	,advanceCursor: function(skip) {
-		while(this.cursor < this.length && this.array[this.cursor] != lip_PointStatus.Unknown) this.cursor++;
 	}
 	,render: function(shape) {
 		var z;

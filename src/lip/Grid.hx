@@ -28,9 +28,11 @@ class Grid {
         setSymmetrics(row, col, y, x, inferred);
       }
     }
-
     setAt(row, col, radius <= 0 ? Interior(Evaluated(-radius)) : Exterior(Evaluated(radius)));
-    advanceCursor(absradius);
+
+    while (cursor < length && array[cursor] != Unknown)
+      cursor++;
+
   }
 
   function setSymmetrics(row: Int, col: Int, drow: Int, dcol: Int, value: PointStatus) {
@@ -70,12 +72,6 @@ class Grid {
 
   inline function linear2row(linear: Int): Int {
     return linear % rows;
-  }
-
-  function advanceCursor(skip: Int): Void {
-    // skip is not used right now. But it will be one day
-    while (cursor < length && array[cursor] != Unknown)
-      cursor++;
   }
 
   public function render(shape: Shape): Void {
