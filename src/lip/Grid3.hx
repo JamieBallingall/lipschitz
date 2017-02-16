@@ -1,7 +1,6 @@
 package lip;
 
 import lip.PointStatus;
-import lip.Shape;
 using thx.Ints;
 
 class Grid3 {

@@ -26,9 +26,28 @@ class Boolean {
       return -a(xx, yy);
     }
   }
+
   public static function union3(a: Shape3, b: Shape3): Shape3 {
     return function (xx: Float, yy: Float, zz:Float): Float {
       return Math.min(a(xx, yy, zz), b(xx, yy, zz));
+    }
+  }
+
+  public static function intersection3(a: Shape3, b: Shape3): Shape3 {
+    return function (xx: Float, yy: Float, zz:Float): Float {
+      return Math.max(a(xx, yy, zz), b(xx, yy, zz));
+    }
+  }
+
+  public static function difference3(a: Shape3, b: Shape3): Shape3 {
+    return function (xx: Float, yy: Float, zz:Float): Float {
+      return Math.max(a(xx, yy, zz), -b(xx, yy, zz));
+    }
+  }
+
+  public static function complement3(a: Shape3): Shape3 {
+    return function (xx: Float, yy: Float, zz:Float): Float {
+      return -a(xx, yy, zz);
     }
   }
 }

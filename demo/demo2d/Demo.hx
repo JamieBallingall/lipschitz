@@ -1,18 +1,15 @@
 import thx.color.Rgbxa;
-import thx.color.Hsl;
-import lip.shapes.Primitives;
-import lip.shapes.Boolean;
+import lip.shapes.Primitives.*;
 
 class Demo {
   static var unknown  = Rgbxa.create(0, 0, 0, 0);
   static var interior = Rgbxa.create(0, 0, 0, 1);
-  static var exterior = Rgbxa.create(1, 1, 1, 1);
+  static var exterior = Rgbxa.create(1, 1, 1, 0.5);
   static var border   = Rgbxa.create(0.65, 0.65, 0.65, 1);
 
   public static function main() {
     var grid = new lip.Grid(100, 100);
-    var shape = Boolean.intersection(Primitives.circle(40, 40, 25),
-                                     Primitives.halfplane(1, 1, -75));
+    var shape = circle(40, 40, 25) & halfplane(1, 1, -90) - circle(40, 40, 10);
     grid.render(shape);
     MiniCanvas.create(grid.cols, grid.rows)
       .grid()
