@@ -1,6 +1,7 @@
 package lip;
 
 import lip.shapes.Boolean;
+import lip.shapes.Transform;
 
 @:callable
 abstract Shape(ShapeF) from ShapeF to ShapeF {
@@ -19,6 +20,12 @@ abstract Shape(ShapeF) from ShapeF to ShapeF {
   @:op(-A)
   inline public function negate(): Shape
     return Boolean.complement(this);
+
+  inline public function translate(x: Float, y: Float): Shape
+    return Transform.translate(this, x, y);
+
+  inline public function scale(sx: Float, sy: Float): Shape
+    return Transform.scale(this, sx, sy);
 }
 
 typedef ShapeF = Float -> Float -> Float;

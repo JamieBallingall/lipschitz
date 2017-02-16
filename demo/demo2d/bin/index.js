@@ -24,9 +24,10 @@ DateTools.getMonthDays = function(d) {
 var Demo = function() { };
 Demo.__name__ = ["Demo"];
 Demo.main = function() {
-	var grid = new lip_Grid(100,100);
+	var grid = new lip_Grid(500,500);
 	var shape = lip_shapes_Boolean.intersection(lip_shapes_Primitives.circle(40,40,25),lip_shapes_Boolean.difference(lip_shapes_Primitives.halfplane(1,1,-90),lip_shapes_Primitives.circle(40,40,10)));
-	grid.render(shape);
+	var tmp = lip_shapes_Boolean.union(lip_shapes_Transform.scale(shape,2,1.5),lip_shapes_Transform.translate(shape,100,10));
+	grid.render(tmp);
 	minicanvas_MiniCanvas.create(grid.cols,grid.rows).grid().border(1,Demo.border).box(function(x,y) {
 		var _g = grid.getAt(y * grid.rows | 0,x * grid.cols | 0);
 		switch(_g[1]) {
@@ -1446,6 +1447,12 @@ lip__$Shape_Shape_$Impl_$.difference = function(this1,other) {
 lip__$Shape_Shape_$Impl_$.negate = function(this1) {
 	return lip_shapes_Boolean.complement(this1);
 };
+lip__$Shape_Shape_$Impl_$.translate = function(this1,x,y) {
+	return lip_shapes_Transform.translate(this1,x,y);
+};
+lip__$Shape_Shape_$Impl_$.scale = function(this1,sx,sy) {
+	return lip_shapes_Transform.scale(this1,sx,sy);
+};
 var lip__$Shape3_Shape3_$Impl_$ = {};
 lip__$Shape3_Shape3_$Impl_$.__name__ = ["lip","_Shape3","Shape3_Impl_"];
 lip__$Shape3_Shape3_$Impl_$.or = function(this1,other) {
@@ -1459,6 +1466,12 @@ lip__$Shape3_Shape3_$Impl_$.difference = function(this1,other) {
 };
 lip__$Shape3_Shape3_$Impl_$.negate = function(this1) {
 	return lip_shapes_Boolean.complement3(this1);
+};
+lip__$Shape3_Shape3_$Impl_$.translate = function(this1,x,y,z) {
+	return lip_shapes_Transform.translate3(this1,x,y,z);
+};
+lip__$Shape3_Shape3_$Impl_$.scale = function(this1,sx,sy,sz) {
+	return lip_shapes_Transform.scale3(this1,sx,sy,sz);
 };
 var lip_shapes_Boolean = function() { };
 lip_shapes_Boolean.__name__ = ["lip","shapes","Boolean"];
@@ -1523,6 +1536,28 @@ lip_shapes_Primitives.sphere = function(x,y,z,r) {
 		var ydiff = yy - y;
 		var zdiff = zz - z;
 		return Math.sqrt(xdiff * xdiff + ydiff * ydiff + zdiff * zdiff) - r;
+	};
+};
+var lip_shapes_Transform = function() { };
+lip_shapes_Transform.__name__ = ["lip","shapes","Transform"];
+lip_shapes_Transform.translate = function(a,x,y) {
+	return function(xx,yy) {
+		return a(xx - x,yy - y);
+	};
+};
+lip_shapes_Transform.scale = function(a,sx,sy) {
+	return function(xx,yy) {
+		return a(xx / sx,yy / sy);
+	};
+};
+lip_shapes_Transform.translate3 = function(a,x,y,z) {
+	return function(xx,yy,zz) {
+		return a(xx - x,yy - y,zz - z);
+	};
+};
+lip_shapes_Transform.scale3 = function(a,sx,sy,sz) {
+	return function(xx,yy,zz) {
+		return a(xx / sx,yy / sy,zz / sz);
 	};
 };
 var minicanvas_MiniCanvas = function(width,height,scaleMode) {

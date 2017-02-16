@@ -1,5 +1,6 @@
 import thx.color.Rgbxa;
 import lip.shapes.Primitives.*;
+import lip.Shape;
 
 class Demo {
   static var unknown  = Rgbxa.create(0, 0, 0, 0);
@@ -8,9 +9,9 @@ class Demo {
   static var border   = Rgbxa.create(0.65, 0.65, 0.65, 1);
 
   public static function main() {
-    var grid = new lip.Grid(100, 100);
+    var grid = new lip.Grid(500, 500);
     var shape = circle(40, 40, 25) & halfplane(1, 1, -90) - circle(40, 40, 10);
-    grid.render(shape);
+    grid.render(shape.scale(2, 1.5) | shape.translate(100, 10));
     MiniCanvas.create(grid.cols, grid.rows)
       .grid()
       .border(1, border)
