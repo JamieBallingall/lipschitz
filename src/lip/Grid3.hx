@@ -9,6 +9,9 @@ class Grid3 {
   public var cols(default, null): Int;
   public var layers(default, null): Int;
 
+  static var interiorInferred = Interior(Inferred);
+  static var exteriorInferred = Exterior(Inferred);
+
   var length: Int;
   var cursor: Int; // The position of the first Unknown
 
@@ -23,7 +26,7 @@ class Grid3 {
 
   public function paintSphere(row: Int, col: Int, layer: Int, radius: Float) {
     var absradius: Int = Math.floor(Math.abs(radius));
-    var inferred: PointStatus = (radius <=0 ? Interior(Inferred) : Exterior(Inferred));
+    var inferred: PointStatus = radius <= 0 ? interiorInferred : exteriorInferred;
     for(l in (-absradius)...absradius) {
       var dl = l / absradius;
       var tl = Math.floor(Math.sqrt(1 - dl * dl) * absradius);
@@ -39,24 +42,22 @@ class Grid3 {
 
     while (cursor < length && array[cursor] != Unknown)
       cursor++;
-
   }
 
   function setSymmetrics(row: Int, col: Int, layer: Int, drow: Int, dcol: Int, value: PointStatus) {
-    switch [drow, dcol] {
-      case [0, 0]:
-        setAt(row, col, layer, value);
-      case [0, dcol]:
-        setAt(row, col + dcol, layer, value);
-        setAt(row, col - dcol, layer, value);
-      case [drow, 0]:
-        setAt(row + drow, col, layer, value);
-        setAt(row - drow, col, layer, value);
-      case [drow, dcol]:
-        setAt(row + drow, col + dcol, layer, value);
-        setAt(row + drow, col - dcol, layer, value);
-        setAt(row - drow, col + dcol, layer, value);
-        setAt(row - drow, col - dcol, layer, value);
+    if(drow == 0 && dcol == 0) {
+      setAt(row, col, layer, value);
+    } else if(drow == 0) {
+      setAt(row, col + dcol, layer, value);
+      setAt(row, col - dcol, layer, value);
+    } else if(dcol == 0) {
+      setAt(row + drow, col, layer, value);
+      setAt(row - drow, col, layer, value);
+    } else {
+      setAt(row + drow, col + dcol, layer, value);
+      setAt(row + drow, col - dcol, layer, value);
+      setAt(row - drow, col + dcol, layer, value);
+      setAt(row - drow, col - dcol, layer, value);
     }
   }
 
@@ -99,5 +100,4 @@ class Grid3 {
       paintSphere(row, col, layer, shape(col, row, layer));
     }
   }
-
 }

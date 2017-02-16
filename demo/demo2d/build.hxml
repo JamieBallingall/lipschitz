@@ -1,5 +1,7 @@
 -lib thx.core
 -lib minicanvas
+-lib thx.benchmark
+-lib thx.format
 -cp ../../src
 -main Demo
 -js bin/index.js

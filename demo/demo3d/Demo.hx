@@ -1,17 +1,18 @@
+import thx.benchmark.measure.Tracker;
 import thx.color.Rgbxa;
+import thx.format.NumberFormat.unit;
 import lip.shapes.Primitives.*;
 
 class Demo {
-  static var unknown  = Rgbxa.create(0, 0, 0, 0);
-  static var interior = Rgbxa.create(0, 0, 0, 1);
-  static var exterior = Rgbxa.create(1, 1, 1, 0.5);
   static var border   = Rgbxa.create(0.65, 0.65, 0.65, 1);
 
   public static function main() {
-    var grid = new lip.Grid3(40, 40, 20);
-    var shape = sphere(8, 8, 10, 6) | sphere(12, 14, 10, 8) - sphere(12, 14, 10, 4) - sphere(16, 18, 8, 6);
+    var grid = new lip.Grid3(80, 80, 40);
+    var shape = sphere(20, 20, 20, 18) - sphere(10, 10, 10, 10);
     var step = 1 / grid.layers;
-    grid.render(shape);
+    Tracker.startTimer("render");
+    grid.render(shape | shape.translate(40, 40, 0));
+    Tracker.stopTimer("render");
     MiniCanvas.create(grid.cols, grid.rows)
       .grid()
       .border(1, border)
@@ -25,6 +26,6 @@ class Demo {
           };
         }
         return Rgbxa.create(0, 0, 0, alpha);
-      }).display("draw grid");
+      }).display("draw grid: " + unit(Tracker.getTimer("render").elapsed, 2, "ms"));
   }
 }
